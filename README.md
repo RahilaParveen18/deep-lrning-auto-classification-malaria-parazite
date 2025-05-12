@@ -95,7 +95,6 @@ After Gaussian smoothing, the images look like below
 
 `Python code for the model Architecture`
 ``` py
-from tensorflow.keras.layers import  BatchNormalization
 from keras import layers
 from keras.layers import Dense
 from keras.layers import Conv2D
@@ -107,8 +106,7 @@ from keras.layers import BatchNormalization
 from keras.layers import Activation
 from keras.models import Model
 from keras.regularizers import l2
-from keras import losses
-from keras import optimizers
+
 
 def conv2d_bn(x, filters, kernel_size, weight_decay=.0, strides=(1, 1)):
     layer = Conv2D(filters=filters,
@@ -156,8 +154,6 @@ def ResidualBlock(x, filters, kernel_size, weight_decay, downsample=True):
 def ResNet18(classes, input_shape, weight_decay=1e-4):
     input = Input(shape=input_shape)
     x = input
-    # x = conv2d_bn_relu(x, filters=64, kernel_size=(7, 7), weight_decay=weight_decay, strides=(2, 2))
-    # x = MaxPool2D(pool_size=(3, 3), strides=(2, 2),  padding='same')(x)
     x = conv2d_bn_relu(x, filters=64, kernel_size=(3, 3), weight_decay=weight_decay, strides=(1, 1))
 
     # # conv 2
@@ -177,22 +173,37 @@ def ResNet18(classes, input_shape, weight_decay=1e-4):
     x = Dense(classes, activation='sigmoid')(x)
     model = Model(input, x, name='ResNet18')
     return model
+```
+`Python code for the model Architecture`
+``` py
+from keras import losses
+from keras import optimizers
 
 weight_decay = 1e-4
-lr = 0.005
+lr = 1e-1
 num_classes = 1
-resnet18 = ResNet18(input_shape=(110, 110, 3), classes=num_classes, weight_decay=weight_decay)
+resnet18 = ResNet18(classes=num_classes, input_shape=(64, 64, 3), weight_decay=weight_decay)
 opt = optimizers.Adam(learning_rate=lr)
 resnet18.compile(optimizer=opt,
-                 loss=losses.binary_crossentropy,
+                 loss='binary_crossentropy',
                  metrics=['accuracy'])
 resnet18.summary()
 
-# Training the model on the input data by using the fit_generator function 
-history = resnet18.fit_generator(train_generator, steps_per_epoch = total_train // batch_size, 
-                       epochs = epochs, 
-                       validation_data = validation_generator, 
-                       validation_steps = total_val // batch_size) 
+callbacks = [
+    tf.keras.callbacks.EarlyStopping(
+        monitor='val_loss',
+        patience=3,
+        restore_best_weights=True
+    ),
+    tf.keras.callbacks.ReduceLROnPlateau(
+        monitor='val_loss',
+        factor=0.2,
+        patience=2
+    )
+]
+
+# Training the model on the input data by using the function
+resNet18_history = resnet18.fit(train_images, train_labels, batch_size = 128, callbacks = callbacks, validation_split = 0.2, epochs = 20, verbose = 1)
 
 ```
      
