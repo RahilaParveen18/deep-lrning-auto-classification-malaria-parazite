@@ -252,5 +252,76 @@ history = model.fit_generator(train_generator, steps_per_epoch = total_train // 
                        validation_data = validation_generator, 
                        validation_steps = total_val // batch_size) 
 
+
+---
+## 🚀 How to Run This Project (on Google Colab)
+
+### 1. ✅ Prerequisites
+
+- Google account (to use Colab and access Drive)
+- A stable internet connection
+
+---
+
+### 2. 📁 Setup Steps
+
+#### Step 1: Download the Dataset
+
+1. Go to the [NIH Malaria Dataset download link](https://data.lhncbc.nlm.nih.gov/public/Malaria/cell_images.zip).
+2. Download `cell_images.zip`.
+3. Upload the ZIP file to your **Google Drive**, preferably to the `MyDrive/` directory.
+
+---
+
+#### Step 2: Open Colab
+
+1. Go to [Google Colab](https://colab.research.google.com/).
+2. Create a new Python 3 notebook.
+3. Copy-paste the code from the notebook or use the provided `.ipynb` file (if available).
+
+---
+
+#### Step 3: Run the Setup Code
+
+1. **Mount Google Drive:**
+
+    ```python
+    from google.colab import drive
+    drive.mount('/content/drive')
+    ```
+
+2. **Unzip the Dataset:**
+
+    ```python
+    import zipfile
+
+    zip_path = '/content/drive/MyDrive/cell_images.zip'  # Update path if needed
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        zip_ref.extractall('/content')  # Extracts to /content/cell_images/
+    ```
+
+3. **Verify Extraction:**
+
+    ```python
+    import os
+    dataset_path = '/content/cell_images'
+    print("Parasitized:", len(os.listdir(os.path.join(dataset_path, 'Parasitized'))))
+    print("Uninfected:", len(os.listdir(os.path.join(dataset_path, 'Uninfected'))))
+    ```
+
+---
+
+### 3. 🧠 Libraries Used
+
+```python
+tensorflow
+keras
+numpy
+matplotlib
+pandas
+seaborn
+PIL (Pillow)
+sklearn                      
+
 ---------------------------------------------------------
 ---------------------------------------------------------
