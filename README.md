@@ -174,7 +174,7 @@ def ResNet18(classes, input_shape, weight_decay=1e-4):
     model = Model(input, x, name='ResNet18')
     return model
 ```
-`Python code for the model Architecture`
+`Python code for the compiling model Architecture`
 ``` py
 from keras import losses
 from keras import optimizers
